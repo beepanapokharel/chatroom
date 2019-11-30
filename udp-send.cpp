@@ -24,6 +24,7 @@ udp-send: a simple udp client
 
 #define BUFLEN 2048
 using namespace std;
+
 int main(void)
 {
 	struct sockaddr_in myaddr, remaddr;
@@ -77,22 +78,12 @@ int main(void)
 		}
 	else
 		{
-		for (int i=0;i<no_of_users+1;i++){
-			cout<<users[i] <<"\n";
-			if(users[i] == tempuser) {
-				cout<<tempuser <<"is logged in already";
-				exit(1);
-			}
-		}
-
-		cout<<"no of users : " <<no_of_users;
-		no_of_users++;
-		users[no_of_users] = tempuser;
-		sender_message = tempuser + " entered chatroom\n";
-		cout<< sender_message;
+		sender_message = tempuser ;
+		//cout<< sender_message;
 		}
 	cin.ignore();
 	strcpy(buf, sender_message.c_str());
+	usercheck =false;
 	/* now let's send the messages */
 	while(1)
 	{
@@ -107,24 +98,15 @@ int main(void)
 		recvlen = recvfrom(fd, (char*)&buf, BUFLEN, 0, (struct sockaddr *)&remaddr, &slen);
         if (recvlen >= 0) {
             buf[recvlen] = 0;	/* expect a printable string - terminate it */
-            //cout<<"received message:"<< buf;
+            if(std::string(buf)=="duplicatelogin") {cout<<"Error: "<< buf; exit(0);}
         }
 		cout<< tempuser <<" : " ;
 		getline(cin, sender_message);
 
     	if(sender_message=="exit") {
+    		sender_message = tempuser+":"+sender_message;
     		strcpy(buf, sender_message.c_str());
     		sendto(fd, &buf, strlen(buf), 0, (struct sockaddr *)&remaddr, slen);
-    		for(int i=0;i<no_of_users;i++)
-    		{
-    			if(users[i]==tempuser){
-    				for(int j=i;j<no_of_users-1;j++){
-    					users[j] = users[j+1];
-    				}
-    				no_of_users--;
-    				break;
-    			}
-    		}
     		exit(0);
     	}
     	if(sender_message=="terminal")
@@ -134,6 +116,7 @@ int main(void)
     	//system("gnome-terminal");
     	sender_message = tempuser + ": " + sender_message;
     	strcpy(buf, sender_message.c_str());
+
 	}
 	close(fd);
 	return 0;

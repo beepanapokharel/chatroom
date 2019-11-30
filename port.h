@@ -6,4 +6,4 @@
  */
 
 #define SERVICE_PORT	5555	/* hard-coded port number */
-int no_of_users=-1;
+bool usercheck=false;

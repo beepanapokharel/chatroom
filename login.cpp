@@ -2,7 +2,7 @@
 #include <fstream>
 #include <string>
 using  namespace std;
-
+bool usercheck=false;
 int authenticate(const std::string &username, const std::string &password) {
     std::ifstream file("authdata.txt");
     std::string fusername, fpassword;
